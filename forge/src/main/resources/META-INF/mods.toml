@@ -1,0 +1,35 @@
+modLoader = "javafml"
+loaderVersion = "[36,)"
+#issueTrackerURL = ""
+license = "MIT"
+
+[[mods]]
+modId = "justforbuilding"
+version = "${version}"
+displayName = "Just For Building"
+authors = "rainy_juzixiao"
+description = '''
+A quick building mod.
+'''
+#logoFile = ""
+
+[[dependencies.justforbuilding]]
+modId = "forge"
+mandatory = true
+versionRange = "[36,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.justforbuilding]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.16.5,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.justforbuilding]]
+modId = "architectury"
+mandatory = true
+versionRange = "[1.32.68,)"
+ordering = "AFTER"
+side = "BOTH"

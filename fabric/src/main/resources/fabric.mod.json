@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "justforbuilding",
+  "version": "${version}",
+  "name": "Just For Building",
+  "description": "A quick building mod.",
+  "authors": [
+    "rainy_juzixiao"
+  ],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.justforbuilding.fabric.justforbuildingFabric"
+    ]
+  },
+  "mixins": [
+    "justforbuilding.mixins.json",
+    "justforbuilding-common.mixins.json"
+  ],
+  "depends": {
+    "fabric": "*",
+    "minecraft": ">=1.16.5",
+    "architectury": ">=1.32.68"
+  }
+}
