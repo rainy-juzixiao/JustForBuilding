@@ -1,0 +1,16 @@
+/*
+ * Copyright (c) 2026 rainy-juzixiao
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+package net.justforbuilding.build.operation;
+
+public enum OperationType {
+    PLACE_BLOCK,
+    REMOVE_BLOCK,
+    REPLACE_BLOCK,
+    COPY,
+    PASTE,
+    BULK
+}
