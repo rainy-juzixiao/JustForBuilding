@@ -10,8 +10,7 @@ import net.justforbuilding.build.BuildExecutor;
 import net.justforbuilding.build.BuildMode;
 import net.justforbuilding.build.BuildState;
 import net.justforbuilding.command.system.*;
-import net.justforbuilding.command.user.PlaceCommand;
-import net.justforbuilding.command.user.PlaceyCommand;
+import net.justforbuilding.command.user.LineCommand;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
@@ -26,8 +25,7 @@ public class ModCommands {
     private static final JfbCommand[] COMMANDS = {
             new OnCommand(),
             new OffCommand(),
-            new PlaceCommand(),
-            new PlaceyCommand(),
+            new LineCommand(),
             new StateCommand(),
             new StatusCommand(),
             new UndoCommand(),

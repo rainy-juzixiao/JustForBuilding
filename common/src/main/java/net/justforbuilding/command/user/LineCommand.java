@@ -13,21 +13,20 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
 
-public class PlaceCommand implements JfbCommand {
+public class LineCommand implements JfbCommand {
 
     private static final int MAX_LENGTH = 1024;
 
     @Override
     public LiteralArgumentBuilder<CommandSourceStack> register() {
-        return Commands.literal("place")
+        return Commands.literal("line")
                 .then(Commands.argument("length", IntegerArgumentType.integer(1, MAX_LENGTH))
                         .executes(ctx -> execute(ctx.getSource(),
                                 IntegerArgumentType.getInteger(ctx, "length"), 0, null))
                         .then(Commands.argument("interval", IntegerArgumentType.integer(0, 64))
                                 .executes(ctx -> execute(ctx.getSource(),
                                         IntegerArgumentType.getInteger(ctx, "length"),
-                                        IntegerArgumentType.getInteger(ctx, "interval"),
-                                        null))
+                                        IntegerArgumentType.getInteger(ctx, "interval"), null))
                                 .then(Commands.argument("direction", StringArgumentType.word())
                                         .executes(ctx -> execute(ctx.getSource(),
                                                 IntegerArgumentType.getInteger(ctx, "length"),
@@ -44,12 +43,12 @@ public class PlaceCommand implements JfbCommand {
             return 0;
         }
         BuildDirection direction = directionName == null ? null : CommandUtil.parseDirection(directionName);
-        if (direction != null && direction.isVertical()) {
-            CommandUtil.sendError(source, CommandUtil.translate("command.jfb.error.invalid_place_direction", directionName));
-            return 0;
-        }
         if (directionName != null && direction == null) {
             CommandUtil.sendError(source, CommandUtil.translate("command.jfb.error.invalid_direction", directionName));
+            return 0;
+        }
+        if (direction != null && direction.isVertical()) {
+            CommandUtil.sendError(source, CommandUtil.translate("command.jfb.error.invalid_place_direction", directionName));
             return 0;
         }
         state.setMode(BuildMode.PLACE);
