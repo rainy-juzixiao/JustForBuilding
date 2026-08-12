@@ -11,7 +11,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.justforbuilding.fabric.justforbuildingFabric"
+      "net.rainy_juzixiao.justforbuilding.fabric.justforbuildingFabric"
     ]
   },
   "mixins": [
