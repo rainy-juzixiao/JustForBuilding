@@ -23,15 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BuildExecutor {
-
     private static final int FLAGS = 3; // UPDATE_NEIGHBORS | UPDATE_CLIENTS
 
-    /**
-     * 从 start 起沿 direction 连续放置 length 个方块（间隔 interval），
-     * 每个方块记录 old block 用于撤销。整批作为一个 BulkOperation 入栈。
-     *
-     * @return 实际放置的方块数
-     */
     public static int placeLine(ServerLevel level, BlockPos start, BuildDirection direction,
                                 int length, int interval, BlockState seed,
                                 BuildState state) {
@@ -82,7 +75,6 @@ public class BuildExecutor {
         return true;
     }
 
-    /** 撤销：BULK 逆序恢复旧方块，单个操作直接恢复。 */
     public static void executeUndo(MinecraftServer server, BuildOperation operation) {
         if (operation instanceof BulkOperation) {
             List<BuildOperation> children = ((BulkOperation) operation).getOperations();
@@ -94,7 +86,6 @@ public class BuildExecutor {
         }
     }
 
-    /** 重做：恢复新方块。 */
     public static void executeRedo(MinecraftServer server, BuildOperation operation) {
         if (operation instanceof BulkOperation) {
             for (BuildOperation child : ((BulkOperation) operation).getOperations()) {
