@@ -16,6 +16,7 @@ public class BuildState {
     public BuildState() {
         this.building = false;
         this.mode = BuildMode.NONE;
+        this.anchor = RectAnchor.FRONT_LEFT;
         this.undoStack = new ArrayDeque<>();
         this.redoStack = new ArrayDeque<>();
     }
@@ -104,6 +105,30 @@ public class BuildState {
         this.keep = keep;
     }
 
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public boolean isHollow() {
+        return hollow;
+    }
+
+    public void setHollow(boolean hollow) {
+        this.hollow = hollow;
+    }
+
+    public RectAnchor getAnchor() {
+        return anchor;
+    }
+
+    public void setAnchor(RectAnchor anchor) {
+        this.anchor = anchor;
+    }
+
     private boolean building;
     private BuildMode mode;
 
@@ -113,6 +138,10 @@ public class BuildState {
     private int interval;
     private BuildDirection direction;
     private boolean keep;
+
+    private int width;
+    private boolean hollow;
+    private RectAnchor anchor;
 
     private final Deque<BuildOperation> undoStack;
     private final Deque<BuildOperation> redoStack;

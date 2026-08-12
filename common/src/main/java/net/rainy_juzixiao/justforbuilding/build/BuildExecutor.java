@@ -55,6 +55,34 @@ public class BuildExecutor {
         return startAlready ? placed + 1 : placed;
     }
 
+    public static int placeRect(ServerLevel level, BlockPos start, BuildDirection direction,
+                                int length, int width, boolean hollow, RectAnchor anchor,
+                                BlockState seed, BuildState state) {
+        boolean startAlready = level.getBlockState(start).getBlock() == seed.getBlock();
+        List<BuildOperation> operations = new ArrayList<>();
+        if (startAlready) {
+            operations.add(new BuildOperation(
+                    OperationType.PLACE_BLOCK,
+                    level.dimension().location().toString(),
+                    start.asLong(),
+                    "minecraft:air",
+                    idOf(seed)
+            ));
+        }
+        List<BlockPos> positions = new ArrayList<>(length * width);
+        RectGeometry.fillPositions(start, direction, length, width, hollow, anchor, positions);
+        int placed = 0;
+        for (BlockPos pos : positions) {
+            if (setBlockWithRecord(level, pos, seed, operations)) {
+                placed++;
+            }
+        }
+        if (!operations.isEmpty()) {
+            state.pushOperation(new BulkOperation(operations));
+        }
+        return startAlready ? placed + 1 : placed;
+    }
+
     private static boolean setBlockWithRecord(ServerLevel level, BlockPos pos,
                                               BlockState newState, List<BuildOperation> operations) {
         if (!level.isLoaded(pos) || pos.getY() < 0 || pos.getY() >= level.getHeight()) {

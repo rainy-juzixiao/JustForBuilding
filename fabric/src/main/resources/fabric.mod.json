@@ -12,6 +12,9 @@
   "entrypoints": {
     "main": [
       "net.rainy_juzixiao.justforbuilding.fabric.justforbuildingFabric"
+    ],
+    "client": [
+      "net.rainy_juzixiao.justforbuilding.fabric.justforbuildingFabricClient"
     ]
   },
   "mixins": [

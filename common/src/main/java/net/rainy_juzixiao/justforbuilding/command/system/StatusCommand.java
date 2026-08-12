@@ -38,6 +38,14 @@ public class StatusCommand implements JfbCommand {
                     CommandUtil.directionComponent(state.getDirection()),
                     CommandUtil.stateModeComponent(state),
                     state.getUndoSize()));
+        } else if (state.getMode() == BuildMode.RECT) {
+            CommandUtil.sendMessage(source, CommandUtil.translate("command.jfb.status.rect",
+                    enabled, mode,
+                    state.getLength(), state.getWidth(),
+                    CommandUtil.rectTypeComponent(state),
+                    CommandUtil.anchorComponent(state.getAnchor()),
+                    CommandUtil.stateModeComponent(state),
+                    state.getUndoSize()));
         } else {
             CommandUtil.sendMessage(source, CommandUtil.translate("command.jfb.status",
                     enabled, mode, state.getUndoSize()));

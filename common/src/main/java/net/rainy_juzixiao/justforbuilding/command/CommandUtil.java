@@ -10,6 +10,7 @@ import net.rainy_juzixiao.justforbuilding.build.BuildDirection;
 import net.rainy_juzixiao.justforbuilding.build.BuildExecutor;
 import net.rainy_juzixiao.justforbuilding.build.BuildMode;
 import net.rainy_juzixiao.justforbuilding.build.BuildState;
+import net.rainy_juzixiao.justforbuilding.build.RectAnchor;
 import net.rainy_juzixiao.justforbuilding.build.operation.BuildOperation;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
@@ -69,24 +70,7 @@ public class CommandUtil {
     }
 
     public static BuildDirection facingDirection(ServerPlayer player) {
-        switch (Math.floorMod(Math.round(player.yRot / 45.0F), 8)) {
-            case 0:
-                return BuildDirection.SOUTH;
-            case 1:
-                return BuildDirection.SOUTHWEST;
-            case 2:
-                return BuildDirection.WEST;
-            case 3:
-                return BuildDirection.NORTHWEST;
-            case 4:
-                return BuildDirection.NORTH;
-            case 5:
-                return BuildDirection.NORTHEAST;
-            case 6:
-                return BuildDirection.EAST;
-            default:
-                return BuildDirection.SOUTHEAST;
-        }
+        return BuildDirection.fromYRot(player.yRot);
     }
 
     public static BuildDirection verticalDirection(ServerPlayer player) {
@@ -103,6 +87,14 @@ public class CommandUtil {
         return translate(state.isKeep() ? "jfb.state.keep" : "jfb.state.once");
     }
 
+    public static Component rectTypeComponent(BuildState state) {
+        return translate(state.isHollow() ? "jfb.rect.type.hollow" : "jfb.rect.type.solid");
+    }
+
+    public static Component anchorComponent(RectAnchor anchor) {
+        return translate("jfb.rect.anchor." + anchor.name().toLowerCase(Locale.ROOT));
+    }
+
     public static Component modeComponent(BuildMode mode) {
         return translate("jfb.mode." + mode.name());
     }
@@ -113,6 +105,9 @@ public class CommandUtil {
         state.setInterval(0);
         state.setDirection(null);
         state.setKeep(false);
+        state.setWidth(0);
+        state.setHollow(false);
+        state.setAnchor(RectAnchor.FRONT_LEFT);
     }
 
     public static int executeUndoRedo(CommandSourceStack source, BuildState state, boolean redo) {

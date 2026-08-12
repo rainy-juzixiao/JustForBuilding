@@ -1,4 +1,5 @@
-build/
+/build/
+*/build/
 *.ipr
 run/
 *.iws

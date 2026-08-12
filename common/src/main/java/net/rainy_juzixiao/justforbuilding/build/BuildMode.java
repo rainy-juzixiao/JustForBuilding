@@ -14,5 +14,6 @@ public enum BuildMode {
     PASTE,
     REMOVE,
     REPLACE,
-    GEOMETRY
+    GEOMETRY,
+    RECT
 }

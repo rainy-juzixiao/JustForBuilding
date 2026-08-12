@@ -17,6 +17,8 @@ import net.rainy_juzixiao.justforbuilding.build.BuildMode;
 import net.rainy_juzixiao.justforbuilding.build.BuildState;
 import net.rainy_juzixiao.justforbuilding.command.system.*;
 import net.rainy_juzixiao.justforbuilding.command.user.LineCommand;
+import net.rainy_juzixiao.justforbuilding.command.user.RectCommand;
+import net.rainy_juzixiao.justforbuilding.preview.RectPreviewSync;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
@@ -32,6 +34,8 @@ public class ModCommands {
             new OnCommand(),
             new OffCommand(),
             new LineCommand(),
+            new RectCommand(),
+            new AnchorCommand(),
             new StateCommand(),
             new StatusCommand(),
             new UndoCommand(),
@@ -59,25 +63,40 @@ public class ModCommands {
         }
         ServerPlayer player = (ServerPlayer) entity;
         BuildState buildState = CommandUtil.getState(player);
-        if (!buildState.isBuilding() || !isPlaceMode(buildState.getMode()) || buildState.getLength() <= 0) {
+        if (!buildState.isBuilding() || buildState.getLength() <= 0) {
             return InteractionResult.PASS;
         }
-        BuildDirection direction;
-        if (buildState.getMode() == BuildMode.PLACE_Y) {
-            direction = CommandUtil.verticalDirection(player);
+        if (buildState.getMode() == BuildMode.RECT) {
+            if (buildState.getWidth() <= 0) {
+                return InteractionResult.PASS;
+            }
+            int placed = BuildExecutor.placeRect(
+                    (ServerLevel) level, pos, CommandUtil.facingDirection(player),
+                    buildState.getLength(), buildState.getWidth(), buildState.isHollow(),
+                    buildState.getAnchor(), state, buildState);
+            CommandUtil.sendMessage(player.createCommandSourceStack(),
+                    CommandUtil.translate("command.jfb.place.triggered", placed));
+        } else if (isPlaceMode(buildState.getMode())) {
+            BuildDirection direction;
+            if (buildState.getMode() == BuildMode.PLACE_Y) {
+                direction = CommandUtil.verticalDirection(player);
+            } else {
+                direction = buildState.getDirection() != null
+                        ? buildState.getDirection()
+                        : CommandUtil.facingDirection(player);
+            }
+            int placed = BuildExecutor.placeLine(
+                    (ServerLevel) level, pos, direction,
+                    buildState.getLength(), buildState.getInterval(), state,
+                    buildState);
+            CommandUtil.sendMessage(player.createCommandSourceStack(),
+                    CommandUtil.translate("command.jfb.place.triggered", placed));
         } else {
-            direction = buildState.getDirection() != null
-                    ? buildState.getDirection()
-                    : CommandUtil.facingDirection(player);
+            return InteractionResult.PASS;
         }
-        int placed = BuildExecutor.placeLine(
-                (ServerLevel) level, pos, direction,
-                buildState.getLength(), buildState.getInterval(), state,
-                buildState);
-        CommandUtil.sendMessage(player.createCommandSourceStack(),
-                CommandUtil.translate("command.jfb.place.triggered", placed));
         if (!buildState.isKeep()) {
             CommandUtil.resetState(buildState);
+            RectPreviewSync.pushSnapshot(player, buildState);
         }
         return Platform.isFabric() ? InteractionResult.FAIL : InteractionResult.PASS;
     }

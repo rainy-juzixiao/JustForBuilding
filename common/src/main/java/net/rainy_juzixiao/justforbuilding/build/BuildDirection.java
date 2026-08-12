@@ -37,4 +37,46 @@ public enum BuildDirection {
     public boolean isVertical() {
         return this == UP || this == DOWN;
     }
+
+    public BuildDirection left() {
+        return fromOffsets(dz, -dx);
+    }
+
+    public BuildDirection right() {
+        return fromOffsets(-dz, dx);
+    }
+
+    public BuildDirection opposite() {
+        return fromOffsets(-dx, -dz);
+    }
+
+    public static BuildDirection fromYRot(float yRot) {
+        switch (Math.floorMod(Math.round(yRot / 45.0F), 8)) {
+            case 0:
+                return SOUTH;
+            case 1:
+                return SOUTHWEST;
+            case 2:
+                return WEST;
+            case 3:
+                return NORTHWEST;
+            case 4:
+                return NORTH;
+            case 5:
+                return NORTHEAST;
+            case 6:
+                return EAST;
+            default:
+                return SOUTHEAST;
+        }
+    }
+
+    private static BuildDirection fromOffsets(int x, int z) {
+        for (BuildDirection direction : values()) {
+            if (direction.dx == x && direction.dz == z) {
+                return direction;
+            }
+        }
+        throw new IllegalArgumentException("no direction for (" + x + ", " + z + ")");
+    }
 }
