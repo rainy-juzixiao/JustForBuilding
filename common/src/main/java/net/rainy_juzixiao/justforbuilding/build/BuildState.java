@@ -15,8 +15,8 @@ import java.util.Deque;
 public class BuildState {
     public BuildState() {
         this.building = false;
-        this.mode = BuildMode.NONE;
-        this.anchor = RectAnchor.FRONT_LEFT;
+        this.keep = false;
+        this.context = null;
         this.undoStack = new ArrayDeque<>();
         this.redoStack = new ArrayDeque<>();
     }
@@ -53,48 +53,8 @@ public class BuildState {
         this.building = building;
     }
 
-    public BuildMode getMode() {
-        return mode;
-    }
-
-    public void setMode(BuildMode mode) {
-        this.mode = mode;
-    }
-
-    public String getSelectedBlock() {
-        return selectedBlock;
-    }
-
-    public void setSelectedBlock(String selectedBlock) {
-        this.selectedBlock = selectedBlock;
-    }
-
     public int getUndoSize() {
         return undoStack.size();
-    }
-
-    public int getLength() {
-        return length;
-    }
-
-    public void setLength(int length) {
-        this.length = length;
-    }
-
-    public int getInterval() {
-        return interval;
-    }
-
-    public void setInterval(int interval) {
-        this.interval = interval;
-    }
-
-    public BuildDirection getDirection() {
-        return direction;
-    }
-
-    public void setDirection(BuildDirection direction) {
-        this.direction = direction;
     }
 
     public boolean isKeep() {
@@ -105,43 +65,17 @@ public class BuildState {
         this.keep = keep;
     }
 
-    public int getWidth() {
-        return width;
+    public BuildContext getContext() {
+        return context;
     }
 
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public boolean isHollow() {
-        return hollow;
-    }
-
-    public void setHollow(boolean hollow) {
-        this.hollow = hollow;
-    }
-
-    public RectAnchor getAnchor() {
-        return anchor;
-    }
-
-    public void setAnchor(RectAnchor anchor) {
-        this.anchor = anchor;
+    public void setContext(BuildContext context) {
+        this.context = context;
     }
 
     private boolean building;
-    private BuildMode mode;
-
-    private String selectedBlock;
-
-    private int length;
-    private int interval;
-    private BuildDirection direction;
     private boolean keep;
-
-    private int width;
-    private boolean hollow;
-    private RectAnchor anchor;
+    private BuildContext context;
 
     private final Deque<BuildOperation> undoStack;
     private final Deque<BuildOperation> redoStack;

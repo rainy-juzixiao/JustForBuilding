@@ -8,7 +8,8 @@ package net.rainy_juzixiao.justforbuilding.mixin.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.rainy_juzixiao.justforbuilding.preview.RectPreviewClient;
+import net.rainy_juzixiao.justforbuilding.preview.PreviewFactory;
+import net.rainy_juzixiao.justforbuilding.preview.RenderPreviewer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -29,6 +30,8 @@ public class LevelRendererMixin {
                                                Camera camera, GameRenderer gameRenderer,
                                                LightTexture lightTexture, Matrix4f matrix4f,
                                                CallbackInfo ci) {
-        RectPreviewClient.render(poseStack, camera);
+        for (RenderPreviewer previewer : PreviewFactory.all()) {
+            previewer.render(poseStack, camera);
+        }
     }
 }

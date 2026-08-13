@@ -10,9 +10,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.rainy_juzixiao.justforbuilding.build.BuildDirection;
-import net.rainy_juzixiao.justforbuilding.build.RectAnchor;
-import net.rainy_juzixiao.justforbuilding.build.RectGeometry;
+import net.rainy_juzixiao.justforbuilding.build.BuildContext;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -27,35 +25,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Environment(EnvType.CLIENT)
-public class RectPreviewClient {
+public abstract class RenderPreviewer {
 
-    private static final int MAX_PREVIEW_BLOCKS = 4096;
+    protected static final int MAX_PREVIEW_BLOCKS = 4096;
 
-    private static boolean active;
-    private static int length;
-    private static int width;
-    private static boolean hollow;
-    private static RectAnchor anchor;
+    private boolean active;
+    private BuildContext context;
 
-    private static final List<BlockPos> POSITIONS = new ArrayList<>();
+    protected final List<BlockPos> positions = new ArrayList<>();
 
-    private RectPreviewClient() {
-    }
-
-    public static void update(boolean active, int length, int width, boolean hollow, RectAnchor anchor) {
-        RectPreviewClient.active = active;
-        RectPreviewClient.length = length;
-        RectPreviewClient.width = width;
-        RectPreviewClient.hollow = hollow;
-        RectPreviewClient.anchor = anchor;
+    public void update(boolean active, BuildContext context) {
+        this.active = active;
+        this.context = context;
         if (!active) {
-            POSITIONS.clear();
+            positions.clear();
         }
     }
 
-    public static void tick(Minecraft minecraft) {
-        POSITIONS.clear();
-        if (!active || minecraft.player == null || minecraft.level == null) {
+    public void tick(Minecraft minecraft) {
+        positions.clear();
+        if (!active || context == null || minecraft.player == null || minecraft.level == null) {
             return;
         }
         HitResult hit = minecraft.hitResult;
@@ -63,28 +52,29 @@ public class RectPreviewClient {
             return;
         }
         BlockHitResult blockHit = (BlockHitResult) hit;
-        BlockPos start = blockHit.getBlockPos().relative(blockHit.getDirection());
-        boolean boundaryOnly = hollow;
-        if (!boundaryOnly && length * width > MAX_PREVIEW_BLOCKS) {
-            boundaryOnly = true;
-        }
-        RectGeometry.fillPositions(start, BuildDirection.fromYRot(minecraft.player.yRot),
-                length, width, boundaryOnly, anchor, POSITIONS);
+        computePositions(blockHit.getBlockPos().relative(blockHit.getDirection()), minecraft);
     }
 
-    public static void render(PoseStack poseStack, Camera camera) {
-        if (POSITIONS.isEmpty()) {
+    protected abstract void computePositions(BlockPos start, Minecraft minecraft);
+
+    public void render(PoseStack poseStack, Camera camera) {
+        if (positions.isEmpty()) {
             return;
         }
         Vec3 cam = camera.getPosition();
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer consumer = bufferSource.getBuffer(RenderType.lines());
-        for (BlockPos pos : POSITIONS) {
+        for (BlockPos pos : positions) {
             LevelRenderer.renderLineBox(poseStack, consumer,
                     pos.getX() - cam.x, pos.getY() - cam.y, pos.getZ() - cam.z,
                     pos.getX() + 1 - cam.x, pos.getY() + 1 - cam.y, pos.getZ() + 1 - cam.z,
                     1.0F, 1.0F, 1.0F, 0.4F);
         }
         bufferSource.endBatch(RenderType.lines());
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <C extends BuildContext> C context() {
+        return (C) context;
     }
 }

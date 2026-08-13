@@ -9,11 +9,12 @@ package net.rainy_juzixiao.justforbuilding.command.user;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.rainy_juzixiao.justforbuilding.build.BuildMode;
 import net.rainy_juzixiao.justforbuilding.build.BuildState;
 import net.rainy_juzixiao.justforbuilding.command.CommandUtil;
 import net.rainy_juzixiao.justforbuilding.command.JfbCommand;
-import net.rainy_juzixiao.justforbuilding.preview.RectPreviewSync;
+import net.rainy_juzixiao.justforbuilding.command.context.RectContext;
+import net.rainy_juzixiao.justforbuilding.preview.line.LinePreviewSync;
+import net.rainy_juzixiao.justforbuilding.preview.rect.RectPreviewSync;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
@@ -48,13 +49,12 @@ public class RectCommand implements JfbCommand {
             CommandUtil.sendError(source, CommandUtil.translate("command.jfb.error.not_active"));
             return 0;
         }
-        state.setMode(BuildMode.RECT);
-        state.setLength(length);
-        state.setWidth(width);
-        state.setHollow(hollow);
+        state.setContext(new RectContext(length, width, hollow));
         RectPreviewSync.pushSnapshot(player, state);
+        LinePreviewSync.pushSnapshot(player, state);
         CommandUtil.sendMessage(source, CommandUtil.translate("command.jfb.rect.success",
-                length, width, CommandUtil.rectTypeComponent(state), CommandUtil.stateModeComponent(state)));
+                length, width, CommandUtil.rectTypeComponent(hollow),
+                CommandUtil.stateModeComponent(state.isKeep())));
         return 1;
     }
 }

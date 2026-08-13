@@ -38,6 +38,18 @@ public enum BuildDirection {
         return this == UP || this == DOWN;
     }
 
+    public boolean isDiagonal() {
+        return dx != 0 && dz != 0;
+    }
+
+    public BuildDirection xAxis() {
+        return fromOffsets(Integer.signum(dx), 0);
+    }
+
+    public BuildDirection zAxis() {
+        return fromOffsets(0, Integer.signum(dz));
+    }
+
     public BuildDirection left() {
         return fromOffsets(dz, -dx);
     }

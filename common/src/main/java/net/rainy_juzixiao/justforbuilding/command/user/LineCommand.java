@@ -11,10 +11,12 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.rainy_juzixiao.justforbuilding.build.BuildDirection;
-import net.rainy_juzixiao.justforbuilding.build.BuildMode;
 import net.rainy_juzixiao.justforbuilding.build.BuildState;
 import net.rainy_juzixiao.justforbuilding.command.CommandUtil;
 import net.rainy_juzixiao.justforbuilding.command.JfbCommand;
+import net.rainy_juzixiao.justforbuilding.command.context.LineContext;
+import net.rainy_juzixiao.justforbuilding.preview.line.LinePreviewSync;
+import net.rainy_juzixiao.justforbuilding.preview.rect.RectPreviewSync;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
@@ -57,12 +59,12 @@ public class LineCommand implements JfbCommand {
             CommandUtil.sendError(source, CommandUtil.translate("command.jfb.error.invalid_place_direction", directionName));
             return 0;
         }
-        state.setMode(BuildMode.PLACE);
-        state.setLength(length);
-        state.setInterval(interval);
-        state.setDirection(direction);
+        state.setContext(new LineContext(length, interval, direction));
+        RectPreviewSync.pushSnapshot(player, state);
+        LinePreviewSync.pushSnapshot(player, state);
         CommandUtil.sendMessage(source, CommandUtil.translate("command.jfb.place.success",
-                length, interval, CommandUtil.directionComponent(direction), CommandUtil.stateModeComponent(state)));
+                length, interval, CommandUtil.directionComponent(direction),
+                CommandUtil.stateModeComponent(state.isKeep())));
         return 1;
     }
 }
