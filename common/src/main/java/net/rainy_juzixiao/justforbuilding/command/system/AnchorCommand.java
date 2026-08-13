@@ -35,8 +35,8 @@ public class AnchorCommand implements JfbCommand {
     private int execute(CommandSourceStack source, RectAnchor anchor) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
         BuildState state = CommandUtil.getState(player);
-        if (!(state.getContext() instanceof RectContext)) {
-            CommandUtil.sendError(source, CommandUtil.translate("command.jfb.error.no_rect"));
+        if (!(state.getContext() instanceof RectContext) || !(state.getContext() instanceof RectContext)) {
+            CommandUtil.sendError(source, CommandUtil.translate("command.jfb.error.no_rect_or_no_cube"));
             return 0;
         }
         RectContext context = (RectContext) state.getContext();

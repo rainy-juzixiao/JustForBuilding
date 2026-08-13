@@ -11,6 +11,7 @@ import net.rainy_juzixiao.justforbuilding.command.ModCommands;
 import net.rainy_juzixiao.justforbuilding.preview.PreviewFactory;
 import net.rainy_juzixiao.justforbuilding.preview.PreviewerRegistry;
 import net.rainy_juzixiao.justforbuilding.preview.RenderPreviewer;
+import net.rainy_juzixiao.justforbuilding.preview.cube.CubePreviewSync;
 import net.rainy_juzixiao.justforbuilding.preview.line.LinePreviewSync;
 import net.rainy_juzixiao.justforbuilding.preview.rect.RectPreviewSync;
 
@@ -24,6 +25,7 @@ public class justforbuilding {
     public static void initClient() {
         RectPreviewSync.register();
         LinePreviewSync.register();
+        CubePreviewSync.register();
         PreviewerRegistry.registerAll();
         ClientTickEvent.CLIENT_PRE.register(minecraft -> {
             for (RenderPreviewer previewer : PreviewFactory.all()) {

@@ -14,8 +14,10 @@ import me.shedaniel.architectury.platform.Platform;
 import net.rainy_juzixiao.justforbuilding.build.BuildContext;
 import net.rainy_juzixiao.justforbuilding.build.BuildState;
 import net.rainy_juzixiao.justforbuilding.command.system.*;
+import net.rainy_juzixiao.justforbuilding.command.user.CubeCommand;
 import net.rainy_juzixiao.justforbuilding.command.user.LineCommand;
 import net.rainy_juzixiao.justforbuilding.command.user.RectCommand;
+import net.rainy_juzixiao.justforbuilding.preview.cube.CubePreviewSync;
 import net.rainy_juzixiao.justforbuilding.preview.line.LinePreviewSync;
 import net.rainy_juzixiao.justforbuilding.preview.rect.RectPreviewSync;
 import net.minecraft.commands.CommandSourceStack;
@@ -35,6 +37,7 @@ public class ModCommands {
             new LineCommand(),
             new RectCommand(),
             new AnchorCommand(),
+            new CubeCommand(),
             new StateCommand(),
             new StatusCommand(),
             new UndoCommand(),
@@ -72,6 +75,7 @@ public class ModCommands {
         if (!buildState.isKeep()) {
             CommandUtil.resetState(buildState);
             RectPreviewSync.pushSnapshot(player, buildState);
+            CubePreviewSync.pushSnapshot(player, buildState);
             LinePreviewSync.pushSnapshot(player, buildState);
         }
         return Platform.isFabric() ? InteractionResult.FAIL : InteractionResult.PASS;

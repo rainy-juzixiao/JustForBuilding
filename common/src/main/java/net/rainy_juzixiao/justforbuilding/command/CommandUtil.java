@@ -83,6 +83,16 @@ public class CommandUtil {
         return translate(hollow ? "jfb.rect.type.hollow" : "jfb.rect.type.solid");
     }
 
+    public static Component cubeTypeComponent(boolean frameOnly, boolean hollow) {
+        if (frameOnly) {
+            return translate("command.jfb.cube.type.frame");
+        } else if (hollow) {
+            return translate("command.jfb.cube.type.hollow");
+        } else {
+            return translate("command.jfb.cube.type.solid");
+        }
+    }
+
     public static Component anchorComponent(RectAnchor anchor) {
         return translate("jfb.rect.anchor." + anchor.name().toLowerCase(Locale.ROOT));
     }

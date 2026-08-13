@@ -9,5 +9,6 @@ package net.rainy_juzixiao.justforbuilding.build;
 public enum BuildMode {
     NONE,
     PLACE,
-    RECT
+    RECT,
+    CUBE
 }
