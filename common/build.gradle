@@ -6,6 +6,18 @@ loom {
     accessWidenerPath = file("src/main/resources/justforbuilding.accesswidener")
 }
 
+// Compile-time annotation processor that collects @Previewer registrations
+// into the generated PreviewerRegistry class. Kept in its own source set so
+// it is not shipped with the mod.
+sourceSets {
+    processor
+}
+
+compileJava {
+    dependsOn compileProcessorJava
+    options.annotationProcessorPath = sourceSets.processor.output + configurations.annotationProcessor
+}
+
 dependencies {
     // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
     // Do NOT use other classes from fabric loader

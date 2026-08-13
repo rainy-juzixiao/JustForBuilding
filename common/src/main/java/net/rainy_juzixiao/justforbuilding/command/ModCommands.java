@@ -11,14 +11,13 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import me.shedaniel.architectury.event.events.BlockEvent;
 import me.shedaniel.architectury.event.events.CommandRegistrationEvent;
 import me.shedaniel.architectury.platform.Platform;
-import net.rainy_juzixiao.justforbuilding.build.BuildDirection;
-import net.rainy_juzixiao.justforbuilding.build.BuildExecutor;
-import net.rainy_juzixiao.justforbuilding.build.BuildMode;
+import net.rainy_juzixiao.justforbuilding.build.BuildContext;
 import net.rainy_juzixiao.justforbuilding.build.BuildState;
 import net.rainy_juzixiao.justforbuilding.command.system.*;
 import net.rainy_juzixiao.justforbuilding.command.user.LineCommand;
 import net.rainy_juzixiao.justforbuilding.command.user.RectCommand;
-import net.rainy_juzixiao.justforbuilding.preview.RectPreviewSync;
+import net.rainy_juzixiao.justforbuilding.preview.line.LinePreviewSync;
+import net.rainy_juzixiao.justforbuilding.preview.rect.RectPreviewSync;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
@@ -63,45 +62,18 @@ public class ModCommands {
         }
         ServerPlayer player = (ServerPlayer) entity;
         BuildState buildState = CommandUtil.getState(player);
-        if (!buildState.isBuilding() || buildState.getLength() <= 0) {
+        BuildContext context = buildState.getContext();
+        if (!buildState.isBuilding() || context == null) {
             return InteractionResult.PASS;
         }
-        if (buildState.getMode() == BuildMode.RECT) {
-            if (buildState.getWidth() <= 0) {
-                return InteractionResult.PASS;
-            }
-            int placed = BuildExecutor.placeRect(
-                    (ServerLevel) level, pos, CommandUtil.facingDirection(player),
-                    buildState.getLength(), buildState.getWidth(), buildState.isHollow(),
-                    buildState.getAnchor(), state, buildState);
-            CommandUtil.sendMessage(player.createCommandSourceStack(),
-                    CommandUtil.translate("command.jfb.place.triggered", placed));
-        } else if (isPlaceMode(buildState.getMode())) {
-            BuildDirection direction;
-            if (buildState.getMode() == BuildMode.PLACE_Y) {
-                direction = CommandUtil.verticalDirection(player);
-            } else {
-                direction = buildState.getDirection() != null
-                        ? buildState.getDirection()
-                        : CommandUtil.facingDirection(player);
-            }
-            int placed = BuildExecutor.placeLine(
-                    (ServerLevel) level, pos, direction,
-                    buildState.getLength(), buildState.getInterval(), state,
-                    buildState);
-            CommandUtil.sendMessage(player.createCommandSourceStack(),
-                    CommandUtil.translate("command.jfb.place.triggered", placed));
-        } else {
-            return InteractionResult.PASS;
-        }
+        int placed = context.executePlace((ServerLevel) level, pos, state, player, buildState);
+        CommandUtil.sendMessage(player.createCommandSourceStack(),
+                CommandUtil.translate("command.jfb.place.triggered", placed));
         if (!buildState.isKeep()) {
             CommandUtil.resetState(buildState);
             RectPreviewSync.pushSnapshot(player, buildState);
+            LinePreviewSync.pushSnapshot(player, buildState);
         }
         return Platform.isFabric() ? InteractionResult.FAIL : InteractionResult.PASS;
-    }
-
-    private static boolean isPlaceMode(BuildMode mode) {
-        return mode == BuildMode.PLACE || mode == BuildMode.PLACE_Y;
     }
 }

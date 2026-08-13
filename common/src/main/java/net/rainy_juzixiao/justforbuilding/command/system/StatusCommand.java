@@ -8,6 +8,7 @@ package net.rainy_juzixiao.justforbuilding.command.system;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.rainy_juzixiao.justforbuilding.build.BuildContext;
 import net.rainy_juzixiao.justforbuilding.build.BuildMode;
 import net.rainy_juzixiao.justforbuilding.build.BuildState;
 import net.rainy_juzixiao.justforbuilding.command.CommandUtil;
@@ -30,25 +31,12 @@ public class StatusCommand implements JfbCommand {
         Component enabled = CommandUtil.translate(state.isBuilding()
                 ? "command.jfb.status.on"
                 : "command.jfb.status.off");
-        Component mode = CommandUtil.modeComponent(state.getMode());
-        if (state.getMode() == BuildMode.PLACE || state.getMode() == BuildMode.PLACE_Y) {
-            CommandUtil.sendMessage(source, CommandUtil.translate("command.jfb.status.place",
-                    enabled, mode,
-                    state.getLength(), state.getInterval(),
-                    CommandUtil.directionComponent(state.getDirection()),
-                    CommandUtil.stateModeComponent(state),
-                    state.getUndoSize()));
-        } else if (state.getMode() == BuildMode.RECT) {
-            CommandUtil.sendMessage(source, CommandUtil.translate("command.jfb.status.rect",
-                    enabled, mode,
-                    state.getLength(), state.getWidth(),
-                    CommandUtil.rectTypeComponent(state),
-                    CommandUtil.anchorComponent(state.getAnchor()),
-                    CommandUtil.stateModeComponent(state),
-                    state.getUndoSize()));
+        BuildContext context = state.getContext();
+        if (context != null) {
+            CommandUtil.sendMessage(source, context.statusComponent(enabled, state.isKeep(), state.getUndoSize()));
         } else {
             CommandUtil.sendMessage(source, CommandUtil.translate("command.jfb.status",
-                    enabled, mode, state.getUndoSize()));
+                    enabled, CommandUtil.modeComponent(BuildMode.NONE), state.getUndoSize()));
         }
         return 1;
     }

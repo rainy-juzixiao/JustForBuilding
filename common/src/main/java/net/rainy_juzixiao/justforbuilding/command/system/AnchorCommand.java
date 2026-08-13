@@ -12,7 +12,8 @@ import net.rainy_juzixiao.justforbuilding.build.BuildState;
 import net.rainy_juzixiao.justforbuilding.build.RectAnchor;
 import net.rainy_juzixiao.justforbuilding.command.CommandUtil;
 import net.rainy_juzixiao.justforbuilding.command.JfbCommand;
-import net.rainy_juzixiao.justforbuilding.preview.RectPreviewSync;
+import net.rainy_juzixiao.justforbuilding.command.context.RectContext;
+import net.rainy_juzixiao.justforbuilding.preview.rect.RectPreviewSync;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
@@ -34,7 +35,12 @@ public class AnchorCommand implements JfbCommand {
     private int execute(CommandSourceStack source, RectAnchor anchor) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
         BuildState state = CommandUtil.getState(player);
-        state.setAnchor(anchor);
+        if (!(state.getContext() instanceof RectContext)) {
+            CommandUtil.sendError(source, CommandUtil.translate("command.jfb.error.no_rect"));
+            return 0;
+        }
+        RectContext context = (RectContext) state.getContext();
+        context.setAnchor(anchor);
         RectPreviewSync.pushSnapshot(player, state);
         CommandUtil.sendMessage(source, CommandUtil.translate("command.jfb.anchor.success",
                 CommandUtil.anchorComponent(anchor)));

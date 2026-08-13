@@ -6,8 +6,8 @@
  */
 package net.rainy_juzixiao.justforbuilding.command;
 
+import net.rainy_juzixiao.justforbuilding.build.BlockOperations;
 import net.rainy_juzixiao.justforbuilding.build.BuildDirection;
-import net.rainy_juzixiao.justforbuilding.build.BuildExecutor;
 import net.rainy_juzixiao.justforbuilding.build.BuildMode;
 import net.rainy_juzixiao.justforbuilding.build.BuildState;
 import net.rainy_juzixiao.justforbuilding.build.RectAnchor;
@@ -69,26 +69,18 @@ public class CommandUtil {
         }
     }
 
-    public static BuildDirection facingDirection(ServerPlayer player) {
-        return BuildDirection.fromYRot(player.yRot);
-    }
-
-    public static BuildDirection verticalDirection(ServerPlayer player) {
-        return player.xRot > 45.0F ? BuildDirection.DOWN : BuildDirection.UP;
-    }
-
     public static Component directionComponent(BuildDirection direction) {
         return translate(direction != null
                 ? "jfb.direction." + direction.name().toLowerCase(Locale.ROOT)
                 : "jfb.direction.facing");
     }
 
-    public static Component stateModeComponent(BuildState state) {
-        return translate(state.isKeep() ? "jfb.state.keep" : "jfb.state.once");
+    public static Component stateModeComponent(boolean keep) {
+        return translate(keep ? "jfb.state.keep" : "jfb.state.once");
     }
 
-    public static Component rectTypeComponent(BuildState state) {
-        return translate(state.isHollow() ? "jfb.rect.type.hollow" : "jfb.rect.type.solid");
+    public static Component rectTypeComponent(boolean hollow) {
+        return translate(hollow ? "jfb.rect.type.hollow" : "jfb.rect.type.solid");
     }
 
     public static Component anchorComponent(RectAnchor anchor) {
@@ -100,14 +92,8 @@ public class CommandUtil {
     }
 
     public static void resetState(BuildState state) {
-        state.setMode(BuildMode.NONE);
-        state.setLength(0);
-        state.setInterval(0);
-        state.setDirection(null);
+        state.setContext(null);
         state.setKeep(false);
-        state.setWidth(0);
-        state.setHollow(false);
-        state.setAnchor(RectAnchor.FRONT_LEFT);
     }
 
     public static int executeUndoRedo(CommandSourceStack source, BuildState state, boolean redo) {
@@ -119,9 +105,9 @@ public class CommandUtil {
             return 0;
         }
         if (redo) {
-            BuildExecutor.executeRedo(source.getServer(), operation);
+            BlockOperations.executeRedo(source.getServer(), operation);
         } else {
-            BuildExecutor.executeUndo(source.getServer(), operation);
+            BlockOperations.executeUndo(source.getServer(), operation);
         }
         sendMessage(source, translate(redo
                 ? "command.jfb.redo.success"

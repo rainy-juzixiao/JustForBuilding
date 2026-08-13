@@ -8,8 +8,11 @@ package net.rainy_juzixiao.justforbuilding;
 
 import me.shedaniel.architectury.event.events.client.ClientTickEvent;
 import net.rainy_juzixiao.justforbuilding.command.ModCommands;
-import net.rainy_juzixiao.justforbuilding.preview.RectPreviewClient;
-import net.rainy_juzixiao.justforbuilding.preview.RectPreviewSync;
+import net.rainy_juzixiao.justforbuilding.preview.PreviewFactory;
+import net.rainy_juzixiao.justforbuilding.preview.PreviewerRegistry;
+import net.rainy_juzixiao.justforbuilding.preview.RenderPreviewer;
+import net.rainy_juzixiao.justforbuilding.preview.line.LinePreviewSync;
+import net.rainy_juzixiao.justforbuilding.preview.rect.RectPreviewSync;
 
 public class justforbuilding {
     public static final String MOD_ID = "justforbuilding";
@@ -20,6 +23,12 @@ public class justforbuilding {
 
     public static void initClient() {
         RectPreviewSync.register();
-        ClientTickEvent.CLIENT_PRE.register(RectPreviewClient::tick);
+        LinePreviewSync.register();
+        PreviewerRegistry.registerAll();
+        ClientTickEvent.CLIENT_PRE.register(minecraft -> {
+            for (RenderPreviewer previewer : PreviewFactory.all()) {
+                previewer.tick(minecraft);
+            }
+        });
     }
 }
