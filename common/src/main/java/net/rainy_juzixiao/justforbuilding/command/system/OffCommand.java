@@ -11,8 +11,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.rainy_juzixiao.justforbuilding.build.BuildState;
 import net.rainy_juzixiao.justforbuilding.command.CommandUtil;
 import net.rainy_juzixiao.justforbuilding.command.JfbCommand;
-import net.rainy_juzixiao.justforbuilding.preview.line.LinePreviewSync;
-import net.rainy_juzixiao.justforbuilding.preview.rect.RectPreviewSync;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,8 +27,7 @@ public class OffCommand implements JfbCommand {
         BuildState state = CommandUtil.getState(player);
         CommandUtil.resetState(state);
         state.setBuilding(false);
-        RectPreviewSync.pushSnapshot(player, state);
-        LinePreviewSync.pushSnapshot(player, state);
+        CommandUtil.pushPreviewSnapshots(player, state);
         CommandUtil.sendMessage(source, CommandUtil.translate("command.jfb.off.success"));
         return 1;
     }

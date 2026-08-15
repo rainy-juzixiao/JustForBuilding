@@ -19,18 +19,19 @@ import net.minecraft.server.level.ServerPlayer;
 
 public class RectPreviewSync {
 
-    private static final ResourceLocation CHANNEL = new ResourceLocation("justforbuilding", "preview");
+    private static final ResourceLocation CHANNEL = new ResourceLocation("justforbuilding", "rect_preview");
 
     public static void register() {
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, CHANNEL, (buf, context) -> {
             boolean active = buf.readBoolean();
+            boolean destroy = buf.readBoolean();
             RectContext rect = null;
             if (active) {
                 rect = new RectContext(0, 0, false);
                 rect.readPreview(buf);
             }
             RectContext snapshot = rect;
-            context.queue(() -> PreviewFactory.get(BuildMode.RECT).update(active, snapshot));
+            context.queue(() -> PreviewFactory.get(BuildMode.RECT).update(active, snapshot, destroy));
         });
     }
 
@@ -38,6 +39,7 @@ public class RectPreviewSync {
         FriendlyByteBuf buf = new FriendlyByteBuf(new UnpooledByteBufAllocator(false).buffer());
         BuildContext context = state.getContext();
         buf.writeBoolean(state.isBuilding() && context != null && context.mode() == BuildMode.RECT);
+        buf.writeBoolean(state.isDestroy());
         if (context != null) {
             context.writePreview(buf);
         }

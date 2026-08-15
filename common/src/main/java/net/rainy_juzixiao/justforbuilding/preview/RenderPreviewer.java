@@ -30,12 +30,14 @@ public abstract class RenderPreviewer {
     protected static final int MAX_PREVIEW_BLOCKS = 4096;
 
     private boolean active;
+    private boolean destroy;
     private BuildContext context;
 
     protected final List<BlockPos> positions = new ArrayList<>();
 
-    public void update(boolean active, BuildContext context) {
+    public void update(boolean active, BuildContext context, boolean destroy) {
         this.active = active;
+        this.destroy = destroy;
         this.context = context;
         if (!active) {
             positions.clear();
@@ -52,7 +54,9 @@ public abstract class RenderPreviewer {
             return;
         }
         BlockHitResult blockHit = (BlockHitResult) hit;
-        computePositions(blockHit.getBlockPos().relative(blockHit.getDirection()), minecraft);
+        // 破坏模式下以点击的方块为起点，放置模式以外侧方块为起点
+        BlockPos start = destroy ? blockHit.getBlockPos() : blockHit.getBlockPos().relative(blockHit.getDirection());
+        computePositions(start, minecraft);
     }
 
     protected abstract void computePositions(BlockPos start, Minecraft minecraft);
@@ -64,11 +68,16 @@ public abstract class RenderPreviewer {
         Vec3 cam = camera.getPosition();
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer consumer = bufferSource.getBuffer(RenderType.lines());
+        // destroy 模式下渲染红色，否则白色
+        float r = 1.0F;
+        float g = destroy ? 0.0F : 1.0F;
+        float b = destroy ? 0.0F : 1.0F;
+        float a = 0.4F;
         for (BlockPos pos : positions) {
             LevelRenderer.renderLineBox(poseStack, consumer,
                     pos.getX() - cam.x, pos.getY() - cam.y, pos.getZ() - cam.z,
                     pos.getX() + 1 - cam.x, pos.getY() + 1 - cam.y, pos.getZ() + 1 - cam.z,
-                    1.0F, 1.0F, 1.0F, 0.4F);
+                    r, g, b, a);
         }
         bufferSource.endBatch(RenderType.lines());
     }

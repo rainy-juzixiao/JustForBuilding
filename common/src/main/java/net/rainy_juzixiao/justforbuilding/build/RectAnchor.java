@@ -10,7 +10,8 @@ public enum RectAnchor {
     FRONT_LEFT,
     FRONT_RIGHT,
     BACK_LEFT,
-    BACK_RIGHT;
+    BACK_RIGHT,
+    CENTER;
 
     public BuildDirection lengthDir(BuildDirection facing) {
         return isBack() ? facing.opposite() : facing;

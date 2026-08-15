@@ -12,10 +12,16 @@ import net.rainy_juzixiao.justforbuilding.build.BuildMode;
 import net.rainy_juzixiao.justforbuilding.build.BuildState;
 import net.rainy_juzixiao.justforbuilding.build.RectAnchor;
 import net.rainy_juzixiao.justforbuilding.build.operation.BuildOperation;
+import net.rainy_juzixiao.justforbuilding.preview.circle.CirclePreviewSync;
+import net.rainy_juzixiao.justforbuilding.preview.cube.CubePreviewSync;
+import net.rainy_juzixiao.justforbuilding.preview.line.LinePreviewSync;
+import net.rainy_juzixiao.justforbuilding.preview.rect.RectPreviewSync;
+import net.rainy_juzixiao.justforbuilding.preview.sphere.SpherePreviewSync;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.rainy_juzixiao.justforbuilding.preview.tree.TreePreviewSync;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -104,6 +110,15 @@ public class CommandUtil {
     public static void resetState(BuildState state) {
         state.setContext(null);
         state.setKeep(false);
+    }
+
+    public static void pushPreviewSnapshots(ServerPlayer player, BuildState state) {
+        LinePreviewSync.pushSnapshot(player, state);
+        RectPreviewSync.pushSnapshot(player, state);
+        CubePreviewSync.pushSnapshot(player, state);
+        CirclePreviewSync.pushSnapshot(player, state);
+        SpherePreviewSync.pushSnapshot(player, state);
+        TreePreviewSync.pushSnapshot(player, state);
     }
 
     public static int executeUndoRedo(CommandSourceStack source, BuildState state, boolean redo) {

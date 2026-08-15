@@ -23,3 +23,5 @@ classes/
 .claude
 .codex
 .mcp.json
+# reference material, not part of the mod
+ref/

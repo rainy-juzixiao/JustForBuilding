@@ -12,6 +12,7 @@ import net.rainy_juzixiao.justforbuilding.build.BuildState;
 import net.rainy_juzixiao.justforbuilding.build.RectAnchor;
 import net.rainy_juzixiao.justforbuilding.command.CommandUtil;
 import net.rainy_juzixiao.justforbuilding.command.JfbCommand;
+import net.rainy_juzixiao.justforbuilding.command.context.CubeContext;
 import net.rainy_juzixiao.justforbuilding.command.context.RectContext;
 import net.rainy_juzixiao.justforbuilding.preview.rect.RectPreviewSync;
 import net.minecraft.commands.CommandSourceStack;
@@ -35,7 +36,7 @@ public class AnchorCommand implements JfbCommand {
     private int execute(CommandSourceStack source, RectAnchor anchor) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
         BuildState state = CommandUtil.getState(player);
-        if (!(state.getContext() instanceof RectContext) || !(state.getContext() instanceof RectContext)) {
+        if (!(state.getContext() instanceof RectContext) || !(state.getContext() instanceof CubeContext)) {
             CommandUtil.sendError(source, CommandUtil.translate("command.jfb.error.no_rect_or_no_cube"));
             return 0;
         }

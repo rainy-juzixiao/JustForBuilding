@@ -25,13 +25,14 @@ public class LinePreviewSync {
     public static void register() {
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, CHANNEL, (buf, context) -> {
             boolean active = buf.readBoolean();
+            boolean destroy = buf.readBoolean();
             LineContext line = null;
             if (active) {
                 line = new LineContext(0, 0, BuildDirection.NORTH);
                 line.readPreview(buf);
             }
             LineContext snapshot = line;
-            context.queue(() -> PreviewFactory.get(BuildMode.PLACE).update(active, snapshot));
+            context.queue(() -> PreviewFactory.get(BuildMode.PLACE).update(active, snapshot, destroy));
         });
     }
 
@@ -40,6 +41,7 @@ public class LinePreviewSync {
         BuildContext context = state.getContext();
         boolean active = state.isBuilding() && context != null && context.mode() == BuildMode.PLACE && context instanceof LineContext;
         buf.writeBoolean(active);
+        buf.writeBoolean(state.isDestroy());
         if (active) {
             LineContext line = (LineContext) context;
             buf.writeInt(line.getLength());

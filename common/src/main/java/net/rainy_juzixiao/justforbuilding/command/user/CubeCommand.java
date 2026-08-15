@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2026 rainy-juzixiao
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 package net.rainy_juzixiao.justforbuilding.command.user;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -7,8 +13,6 @@ import net.rainy_juzixiao.justforbuilding.build.BuildState;
 import net.rainy_juzixiao.justforbuilding.command.CommandUtil;
 import net.rainy_juzixiao.justforbuilding.command.JfbCommand;
 import net.rainy_juzixiao.justforbuilding.command.context.CubeContext;
-import net.rainy_juzixiao.justforbuilding.preview.cube.CubePreviewSync;
-import net.rainy_juzixiao.justforbuilding.preview.line.LinePreviewSync;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
@@ -57,8 +61,7 @@ public class CubeCommand implements JfbCommand {
             return 0;
         }
         state.setContext(new CubeContext(length, width, height, frameOnly, hollow));
-        CubePreviewSync.pushSnapshot(player, state);
-        LinePreviewSync.pushSnapshot(player, state);
+        CommandUtil.pushPreviewSnapshots(player, state);
         CommandUtil.sendMessage(source, CommandUtil.translate("command.jfb.cube.success",
                 length, width, height,
                 CommandUtil.cubeTypeComponent(frameOnly, hollow),

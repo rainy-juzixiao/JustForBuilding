@@ -10,5 +10,8 @@ public enum BuildMode {
     NONE,
     PLACE,
     RECT,
-    CUBE
+    CUBE,
+    CIRCLE,
+    SPHERE,
+    TREE
 }

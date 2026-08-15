@@ -10,7 +10,7 @@ import net.rainy_juzixiao.justforbuilding.build.BuildContext;
 import net.rainy_juzixiao.justforbuilding.build.BuildMode;
 import net.rainy_juzixiao.justforbuilding.build.BuildState;
 import net.rainy_juzixiao.justforbuilding.build.RectAnchor;
-import net.rainy_juzixiao.justforbuilding.build.executor.CubeExecutor;
+import net.rainy_juzixiao.justforbuilding.build.executor.CircleExecutor;
 import net.rainy_juzixiao.justforbuilding.build.operation.BuildOperation;
 import net.rainy_juzixiao.justforbuilding.build.operation.BulkOperation;
 import net.rainy_juzixiao.justforbuilding.command.CommandUtil;
@@ -23,17 +23,17 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 
-public class CubeContext implements BuildContext {
+public class CircleContext implements BuildContext {
 
-    private final CubeExecutor executor;
+    private final CircleExecutor executor;
 
-    public CubeContext(int length, int width, int height, boolean frameOnly, boolean hollow) {
-        this.executor = new CubeExecutor(length, width, height, frameOnly, hollow);
+    public CircleContext(int size, boolean useDiameter, boolean hollow) {
+        this.executor = new CircleExecutor(size, useDiameter, hollow);
     }
 
     @Override
     public BuildMode mode() {
-        return BuildMode.CUBE;
+        return BuildMode.CIRCLE;
     }
 
     @Override
@@ -48,13 +48,12 @@ public class CubeContext implements BuildContext {
 
     @Override
     public Component statusComponent(Component enabled, boolean keep, int undoSize) {
-        return CommandUtil.translate("command.jfb.status.cube",
+        return CommandUtil.translate("command.jfb.status.circle",
                 enabled,
                 CommandUtil.modeComponent(mode()),
-                executor.getLength(),
-                executor.getWidth(),
-                executor.getHeight(),
-                CommandUtil.cubeTypeComponent(executor.isFrameOnly(), executor.isHollow()),
+                executor.getSize(),
+                executor.isUseDiameter() ? "diameter" : "radius",
+                executor.isHollow() ? "hollow" : "solid",
                 CommandUtil.anchorComponent(executor.getAnchor()),
                 CommandUtil.stateModeComponent(keep),
                 undoSize);
@@ -73,20 +72,12 @@ public class CubeContext implements BuildContext {
         executor.setAnchor(anchor);
     }
 
-    public int getLength() {
-        return executor.getLength();
+    public int getSize() {
+        return executor.getSize();
     }
 
-    public int getWidth() {
-        return executor.getWidth();
-    }
-
-    public int getHeight() {
-        return executor.getHeight();
-    }
-
-    public boolean isFrameOnly() {
-        return executor.isFrameOnly();
+    public boolean isUseDiameter() {
+        return executor.isUseDiameter();
     }
 
     public boolean isHollow() {

@@ -6,7 +6,6 @@
  */
 package net.rainy_juzixiao.justforbuilding.build;
 
-
 import net.rainy_juzixiao.justforbuilding.build.operation.BuildOperation;
 
 import java.util.ArrayDeque;
@@ -16,6 +15,7 @@ public class BuildState {
     public BuildState() {
         this.building = false;
         this.keep = false;
+        this.destroy = false;
         this.context = null;
         this.undoStack = new ArrayDeque<>();
         this.redoStack = new ArrayDeque<>();
@@ -34,7 +34,6 @@ public class BuildState {
         redoStack.push(operation);
         return operation;
     }
-
 
     public BuildOperation redo() {
         if (redoStack.isEmpty()) {
@@ -65,6 +64,14 @@ public class BuildState {
         this.keep = keep;
     }
 
+    public boolean isDestroy() {
+        return destroy;
+    }
+
+    public void setDestroy(boolean destroy) {
+        this.destroy = destroy;
+    }
+
     public BuildContext getContext() {
         return context;
     }
@@ -75,6 +82,7 @@ public class BuildState {
 
     private boolean building;
     private boolean keep;
+    private boolean destroy;
     private BuildContext context;
 
     private final Deque<BuildOperation> undoStack;

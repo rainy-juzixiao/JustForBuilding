@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2026 rainy-juzixiao
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 package net.rainy_juzixiao.justforbuilding.geo;
 
 import net.minecraft.core.BlockPos;
@@ -30,8 +36,9 @@ public class CubeGeometry {
                     boolean include;
 
                     if (frameOnly) {
-                        boolean onBottomEdge = (k == 0) && (i == 0 || i == length - 1 || j == 0 || j == width - 1);
-                        boolean onTopEdge = (k == height - 1) && (i == 0 || i == length - 1 || j == 0 || j == width - 1);
+                        boolean cond = i == 0 || i == length - 1 || j == 0 || j == width - 1;
+                        boolean onBottomEdge = (k == 0) && cond;
+                        boolean onTopEdge = (k == height - 1) && cond;
                         boolean onVerticalEdge = (k > 0 && k < height - 1) &&
                                 (i == 0 || i == length - 1) &&
                                 (j == 0 || j == width - 1);
