@@ -13,5 +13,6 @@ public enum BuildMode {
     CUBE,
     CIRCLE,
     SPHERE,
-    TREE
+    TREE,
+    STAFF
 }

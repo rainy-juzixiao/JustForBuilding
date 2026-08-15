@@ -7,6 +7,7 @@
 package net.rainy_juzixiao.justforbuilding.build;
 
 import net.rainy_juzixiao.justforbuilding.build.operation.BuildOperation;
+import net.minecraft.core.BlockPos;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -80,10 +81,23 @@ public class BuildState {
         this.context = context;
     }
 
+    public BlockPos getBasePos() {
+        return basePos;
+    }
+
+    public void setBasePos(BlockPos basePos) {
+        this.basePos = basePos;
+    }
+
+    public void clearBasePos() {
+        this.basePos = null;
+    }
+
     private boolean building;
     private boolean keep;
     private boolean destroy;
     private BuildContext context;
+    private BlockPos basePos;
 
     private final Deque<BuildOperation> undoStack;
     private final Deque<BuildOperation> redoStack;

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class ConfiguredFeatureExecutor implements BuildExecutor {
     private static final int RANGE_XZ = 16;
@@ -31,8 +32,11 @@ public class ConfiguredFeatureExecutor implements BuildExecutor {
 
     private final ConfiguredFeature<?, ?> feature;
 
+    private final long seed;
+
     public ConfiguredFeatureExecutor(ConfiguredFeature<?, ?> feature) {
         this.feature = feature;
+        this.seed = new Random().nextLong();
     }
 
     @Override
@@ -80,13 +84,14 @@ public class ConfiguredFeatureExecutor implements BuildExecutor {
      * TreeFeature 要求树根下方必须是草方块/泥土/耕地，否则直接放弃放置。
      */
     private boolean tryPlace(ServerLevel level, BlockPos pos) {
-        if (feature.place(level, level.getChunkSource().getGenerator(), level.getRandom(), pos)) {
+        Random random = new Random(seed);
+        if (feature.place(level, level.getChunkSource().getGenerator(), random, pos)) {
             return true;
         }
         if (level.getBlockState(pos.below()).getBlock() != Blocks.DIRT) {
             level.setBlock(pos.below(), Blocks.DIRT.defaultBlockState(), 2);
         }
-        return feature.place(level, level.getChunkSource().getGenerator(), level.getRandom(), pos);
+        return feature.place(level, level.getChunkSource().getGenerator(), random, pos);
     }
 
     private Map<Long, BlockState> snapshot(ServerLevel level, int minX, int maxX,

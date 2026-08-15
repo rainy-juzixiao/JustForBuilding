@@ -32,22 +32,45 @@ public class TreeContext implements BuildContext {
 
     private final ResourceLocation featureId;
 
+    private final List<BlockPos> shape;
+
+    private final int rangeXZ;
+    private final int rangeHeight;
+
     public TreeContext(TreeExecutor.TreeType type) {
         this.executor = new TreeExecutor(type);
         this.featureExecutor = null;
         this.featureId = null;
+        this.shape = null;
+        this.rangeXZ = 0;
+        this.rangeHeight = 0;
     }
 
     public TreeContext(ConfiguredFeature<?, ?> feature, ResourceLocation featureId) {
         this.executor = null;
         this.featureExecutor = new ConfiguredFeatureExecutor(feature);
         this.featureId = featureId;
+        this.shape = null;
+        this.rangeXZ = 0;
+        this.rangeHeight = 0;
     }
 
-    public TreeContext(ResourceLocation featureId) {
+    public TreeContext(TreeExecutor.TreeType type, List<BlockPos> shape) {
+        this.executor = new TreeExecutor(type);
+        this.featureExecutor = null;
+        this.featureId = null;
+        this.shape = shape;
+        this.rangeXZ = 0;
+        this.rangeHeight = 0;
+    }
+
+    public TreeContext(ResourceLocation featureId, int rangeXZ, int rangeHeight) {
         this.executor = null;
         this.featureExecutor = null;
         this.featureId = featureId;
+        this.shape = null;
+        this.rangeXZ = rangeXZ;
+        this.rangeHeight = rangeHeight;
     }
 
     public TreeExecutor getExecutor() {
@@ -56,6 +79,18 @@ public class TreeContext implements BuildContext {
 
     public ResourceLocation getFeatureId() {
         return featureId;
+    }
+
+    public List<BlockPos> getShape() {
+        return shape;
+    }
+
+    public int getRangeXZ() {
+        return rangeXZ;
+    }
+
+    public int getRangeHeight() {
+        return rangeHeight;
     }
 
     @Override

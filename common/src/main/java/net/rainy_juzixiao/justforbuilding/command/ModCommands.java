@@ -17,6 +17,7 @@ import net.rainy_juzixiao.justforbuilding.build.BuildMode;
 import net.rainy_juzixiao.justforbuilding.build.BuildState;
 import net.rainy_juzixiao.justforbuilding.command.system.*;
 import net.rainy_juzixiao.justforbuilding.command.user.*;
+import net.rainy_juzixiao.justforbuilding.item.NBSStaffItem;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
@@ -96,6 +97,15 @@ public class ModCommands {
     private static InteractionResult onBlockBreak(Level level, BlockPos blockPos, BlockState blockState, ServerPlayer serverPlayer, IntValue intValue) {
         if (level.isClientSide) {
             return InteractionResult.PASS;
+        }
+        if (serverPlayer.getMainHandItem().getItem() instanceof NBSStaffItem) {
+            // 破坏回弹（取消破坏），基点设为被破坏的方块本身（无偏移），并进入删除模式
+            BuildState state = CommandUtil.getState(serverPlayer);
+            state.setBasePos(blockPos);
+            state.setDestroy(true);
+            serverPlayer.displayClientMessage(CommandUtil.translate("command.jfb.invert.destroy"), true);
+            CommandUtil.pushPreviewSnapshots(serverPlayer, state);
+            return InteractionResult.FAIL;
         }
         BuildState buildState = CommandUtil.getState(serverPlayer);
         BuildContext context = buildState.getContext();

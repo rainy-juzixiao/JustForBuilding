@@ -110,6 +110,7 @@ public class CommandUtil {
     public static void resetState(BuildState state) {
         state.setContext(null);
         state.setKeep(false);
+        state.clearBasePos();
     }
 
     public static void pushPreviewSnapshots(ServerPlayer player, BuildState state) {

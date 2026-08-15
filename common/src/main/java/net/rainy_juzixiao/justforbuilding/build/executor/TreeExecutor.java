@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.lang.reflect.Proxy;
 import java.util.*;
 
 public class TreeExecutor implements BuildExecutor {
@@ -27,17 +28,17 @@ public class TreeExecutor implements BuildExecutor {
 
     private final TreeType type;
 
+    private final long seed;
+
     public TreeExecutor(TreeType type) {
         this.type = type;
+        this.seed = new Random().nextLong();
     }
 
     public TreeType getType() {
         return type;
     }
 
-    /**
-     * 记录模式：非 null 时 setTile 在落方块的同时记录操作，供命令撤销/重做使用。
-     */
     private List<BuildOperation> recording;
 
     @Override
@@ -45,7 +46,7 @@ public class TreeExecutor implements BuildExecutor {
         List<BuildOperation> operations = new ArrayList<>();
         this.recording = operations;
         try {
-            execute(level, pos, seed, Blocks.OAK_LEAVES.defaultBlockState(), level.getRandom());
+            execute(level, pos, seed, Blocks.OAK_LEAVES.defaultBlockState(), new Random(this.seed));
         } finally {
             this.recording = null;
         }
@@ -61,6 +62,48 @@ public class TreeExecutor implements BuildExecutor {
             case MEDIUM: generateMedium(level, pos, logState, leafState, random); break;
             case PINE: generatePine(level, pos, logState, leafState, random); break;
         }
+    }
+
+    public List<BlockPos> computeShape(BlockPos origin) {
+        Map<Long, BlockState> blocks = new HashMap<>();
+        List<BlockPos> shape = new ArrayList<>();
+        LevelAccessor preview = createPreviewLevel(new Random(this.seed), blocks, shape);
+        execute(preview, origin, Blocks.OAK_LOG.defaultBlockState(),
+                Blocks.OAK_LEAVES.defaultBlockState(), preview.getRandom());
+        return shape;
+    }
+
+    private static LevelAccessor createPreviewLevel(Random random, Map<Long, BlockState> blocks, List<BlockPos> shape) {
+        return (LevelAccessor) Proxy.newProxyInstance(LevelAccessor.class.getClassLoader(),
+                new Class<?>[]{LevelAccessor.class}, (proxy, method, args) -> {
+                    switch (method.getName()) {
+                        case "setBlock": {
+                            BlockPos pos = (BlockPos) args[0];
+                            BlockState state = (BlockState) args[1];
+                            if (blocks.putIfAbsent(pos.asLong(), state) == null) {
+                                shape.add(pos.immutable());
+                            }
+                            return true;
+                        }
+                        case "getBlockState": {
+                            BlockState state = blocks.get(((BlockPos) args[0]).asLong());
+                            return state != null ? state : Blocks.AIR.defaultBlockState();
+                        }
+                        case "getHeight":
+                            return 256;
+                        case "getRandom":
+                            return random;
+                        default: {
+                            Class<?> returnType = method.getReturnType();
+                            if (returnType == boolean.class) return false;
+                            if (returnType == int.class) return 0;
+                            if (returnType == long.class) return 0L;
+                            if (returnType == double.class) return 0.0D;
+                            if (returnType == float.class) return 0.0F;
+                            return null;
+                        }
+                    }
+                });
     }
 
     private void setTile(LevelAccessor level, BlockPos pos, BlockState state) {

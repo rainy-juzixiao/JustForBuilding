@@ -8,6 +8,7 @@ package net.rainy_juzixiao.justforbuilding.preview.tree;
 
 import io.netty.buffer.UnpooledByteBufAllocator;
 import me.shedaniel.architectury.networking.NetworkManager;
+import net.minecraft.core.BlockPos;
 import net.rainy_juzixiao.justforbuilding.build.BuildContext;
 import net.rainy_juzixiao.justforbuilding.build.BuildMode;
 import net.rainy_juzixiao.justforbuilding.build.BuildState;
@@ -18,9 +19,15 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TreePreviewSync {
 
     private static final ResourceLocation CHANNEL = new ResourceLocation("justforbuilding", "tree_preview");
+
+    private static final int RANGE_XZ = 12;
+    private static final int RANGE_HEIGHT = 48;
 
     public static void register() {
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, CHANNEL, (buf, context) -> {
@@ -29,10 +36,18 @@ public class TreePreviewSync {
             TreeContext tree = null;
             if (active) {
                 if (buf.readBoolean()) {
-                    tree = new TreeContext(new ResourceLocation(buf.readUtf(32767)));
+                    ResourceLocation id = new ResourceLocation(buf.readUtf(32767));
+                    int rangeXZ = buf.readVarInt();
+                    int rangeHeight = buf.readVarInt();
+                    tree = new TreeContext(id, rangeXZ, rangeHeight);
                 } else {
                     TreeExecutor.TreeType type = TreeExecutor.TreeType.values()[buf.readByte()];
-                    tree = new TreeContext(type);
+                    int count = buf.readVarInt();
+                    List<BlockPos> shape = new ArrayList<>(count);
+                    for (int i = 0; i < count; i++) {
+                        shape.add(new BlockPos(buf.readVarInt(), buf.readVarInt(), buf.readVarInt()));
+                    }
+                    tree = new TreeContext(type, shape);
                 }
             }
             final TreeContext snapshot = tree;
@@ -57,9 +72,18 @@ public class TreePreviewSync {
             if (treeContext.getExecutor() != null) {
                 buf.writeBoolean(false);
                 buf.writeByte(treeContext.getExecutor().getType().ordinal());
+                List<BlockPos> shape = treeContext.getExecutor().computeShape(BlockPos.ZERO);
+                buf.writeVarInt(shape.size());
+                for (BlockPos offset : shape) {
+                    buf.writeVarInt(offset.getX());
+                    buf.writeVarInt(offset.getY());
+                    buf.writeVarInt(offset.getZ());
+                }
             } else {
                 buf.writeBoolean(true);
                 buf.writeUtf(treeContext.getFeatureId().toString());
+                buf.writeVarInt(RANGE_XZ);
+                buf.writeVarInt(RANGE_HEIGHT);
             }
         }
         NetworkManager.sendToPlayer(player, CHANNEL, buf);

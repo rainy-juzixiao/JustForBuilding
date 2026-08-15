@@ -11,6 +11,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.rainy_juzixiao.justforbuilding.build.BuildContext;
+import net.rainy_juzixiao.justforbuilding.key.StaffKeyClient;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -49,13 +50,18 @@ public abstract class RenderPreviewer {
         if (!active || context == null || minecraft.player == null || minecraft.level == null) {
             return;
         }
-        HitResult hit = minecraft.hitResult;
-        if (hit == null || hit.getType() != HitResult.Type.BLOCK) {
-            return;
+        BlockPos start;
+        if (StaffKeyClient.basePos != null) {
+            start = StaffKeyClient.basePos;
+        } else {
+            HitResult hit = minecraft.hitResult;
+            if (hit == null || hit.getType() != HitResult.Type.BLOCK) {
+                return;
+            }
+            BlockHitResult blockHit = (BlockHitResult) hit;
+            // 破坏模式下以点击的方块为起点，放置模式以外侧方块为起点
+            start = destroy ? blockHit.getBlockPos() : blockHit.getBlockPos().relative(blockHit.getDirection());
         }
-        BlockHitResult blockHit = (BlockHitResult) hit;
-        // 破坏模式下以点击的方块为起点，放置模式以外侧方块为起点
-        BlockPos start = destroy ? blockHit.getBlockPos() : blockHit.getBlockPos().relative(blockHit.getDirection());
         computePositions(start, minecraft);
     }
 

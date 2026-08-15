@@ -8,6 +8,9 @@ package net.rainy_juzixiao.justforbuilding;
 
 import me.shedaniel.architectury.event.events.client.ClientTickEvent;
 import net.rainy_juzixiao.justforbuilding.command.ModCommands;
+import net.rainy_juzixiao.justforbuilding.item.ModItems;
+import net.rainy_juzixiao.justforbuilding.key.StaffKeyClient;
+import net.rainy_juzixiao.justforbuilding.key.StaffKeyHandler;
 import net.rainy_juzixiao.justforbuilding.preview.PreviewFactory;
 import net.rainy_juzixiao.justforbuilding.preview.PreviewerRegistry;
 import net.rainy_juzixiao.justforbuilding.preview.RenderPreviewer;
@@ -23,6 +26,7 @@ public class justforbuilding {
 
     public static void init() {
         ModCommands.register();
+        StaffKeyHandler.registerServer();
     }
 
     public static void initClient() {
@@ -37,6 +41,7 @@ public class justforbuilding {
             for (RenderPreviewer previewer : PreviewFactory.all()) {
                 previewer.tick(minecraft);
             }
+            StaffKeyClient.onClientTick(minecraft);
         });
     }
 }
