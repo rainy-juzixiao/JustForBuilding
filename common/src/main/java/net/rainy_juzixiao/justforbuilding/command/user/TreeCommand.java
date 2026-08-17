@@ -13,6 +13,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.rainy_juzixiao.justforbuilding.build.BuildState;
 import net.rainy_juzixiao.justforbuilding.build.executor.TreeExecutor;
+import net.rainy_juzixiao.justforbuilding.command.Command;
 import net.rainy_juzixiao.justforbuilding.command.CommandUtil;
 import net.rainy_juzixiao.justforbuilding.command.JfbCommand;
 import net.rainy_juzixiao.justforbuilding.command.context.TreeContext;
@@ -26,6 +27,7 @@ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 
 import java.util.Optional;
 
+@Command
 public class TreeCommand implements JfbCommand {
     private static final String[] VANILLA_TREES = {
             "oak", "fancy_oak", "birch", "spruce", "pine", "mega_spruce",

@@ -12,6 +12,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.rainy_juzixiao.justforbuilding.build.BuildDirection;
 import net.rainy_juzixiao.justforbuilding.build.BuildState;
+import net.rainy_juzixiao.justforbuilding.command.Command;
 import net.rainy_juzixiao.justforbuilding.command.CommandUtil;
 import net.rainy_juzixiao.justforbuilding.command.JfbCommand;
 import net.rainy_juzixiao.justforbuilding.command.context.LineContext;
@@ -19,6 +20,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
 
+@Command
 public class LineCommand implements JfbCommand {
 
     private static final int MAX_LENGTH = 1024;

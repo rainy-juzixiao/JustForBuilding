@@ -8,12 +8,14 @@ package net.rainy_juzixiao.justforbuilding.command.system;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.rainy_juzixiao.justforbuilding.command.Command;
 import net.rainy_juzixiao.justforbuilding.command.CommandUtil;
 import net.rainy_juzixiao.justforbuilding.command.JfbCommand;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
 
+@Command
 public class OnCommand implements JfbCommand {
 
     @Override

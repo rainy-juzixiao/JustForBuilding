@@ -10,6 +10,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.rainy_juzixiao.justforbuilding.build.BuildState;
+import net.rainy_juzixiao.justforbuilding.command.Command;
 import net.rainy_juzixiao.justforbuilding.command.CommandUtil;
 import net.rainy_juzixiao.justforbuilding.command.JfbCommand;
 import net.rainy_juzixiao.justforbuilding.command.context.CubeContext;
@@ -17,6 +18,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
 
+@Command
 public class CubeCommand implements JfbCommand {
 
     private static final int MAX_SIZE = 1024;

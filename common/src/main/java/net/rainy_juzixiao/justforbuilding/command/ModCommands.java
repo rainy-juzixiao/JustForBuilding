@@ -15,8 +15,6 @@ import me.shedaniel.architectury.utils.IntValue;
 import net.rainy_juzixiao.justforbuilding.build.BuildContext;
 import net.rainy_juzixiao.justforbuilding.build.BuildMode;
 import net.rainy_juzixiao.justforbuilding.build.BuildState;
-import net.rainy_juzixiao.justforbuilding.command.system.*;
-import net.rainy_juzixiao.justforbuilding.command.user.*;
 import net.rainy_juzixiao.justforbuilding.item.NBSStaffItem;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -29,23 +27,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.List;
+
 public class ModCommands {
-    private static final JfbCommand[] COMMANDS = {
-            new OnCommand(),
-            new OffCommand(),
-            new LineCommand(),
-            new RectCommand(),
-            new AnchorCommand(),
-            new CubeCommand(),
-            new CircleCommand(),
-            new SphereCommand(),
-            new StateCommand(),
-            new StatusCommand(),
-            new UndoCommand(),
-            new RedoCommand(),
-            new InvertCommand(),
-            new TreeCommand()
-    };
+    private static final List<JfbCommand> COMMANDS = CommandRegistry.getCommands();
 
     public static void register() {
         CommandRegistrationEvent.EVENT.register(ModCommands::registerCommands);
