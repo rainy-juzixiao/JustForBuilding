@@ -1,5 +1,5 @@
 {
-  "command.jfb.on.success": "已激活，使用 /jfb place <length> 载入放置状态",
+  "command.jfb.on.success": "JFB 已激活",
   "command.jfb.off.success": "已关闭",
   "command.jfb.error.not_active": "请先使用 /jfb on 激活",
   "command.jfb.error.invalid_direction": "无效方向: %s (north/northeast/east/southeast/south/southwest/west/northwest/up/down)",

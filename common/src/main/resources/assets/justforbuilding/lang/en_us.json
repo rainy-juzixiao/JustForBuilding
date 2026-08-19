@@ -1,5 +1,5 @@
 {
-  "command.jfb.on.success": "Activated, use /jfb place <length> to load place mode",
+  "command.jfb.on.success": "JFB Activated",
   "command.jfb.off.success": "Disabled",
   "command.jfb.error.not_active": "Please use /jfb on first",
   "command.jfb.error.invalid_direction": "Invalid direction: %s (north/northeast/east/southeast/south/southwest/west/northwest/up/down)",
